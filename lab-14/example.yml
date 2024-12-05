@@ -1,0 +1,36 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: Install python
+      ansible.builtin.package:
+        name: python-apt
+        state: latest
+    - name: Install apache
+      ansible.builtin.package:
+        name: apache2
+        state: latest
+    - name: Copy Apache with permissions
+      ansible.builtin.copy:
+        src: /home/jzjohnson37367/jzjohnson42-csc2510-devops/lab-13/apache2.conf
+        dest: /etc/apache2/apache2.conf
+        owner: root
+        group: root
+        mode: '0644'
+    - name: Copy index file with permissions
+      ansible.builtin.copy:
+        src: /home/jzjohnson37367/jzjohnson42-csc2510-devops/lab-13/index-2.html
+        dest: /var/www/html/index-2.html
+        owner: root
+        group: root
+        mode: '0644'
+    - name: Create symbolic link
+      ansible.builtin.file:
+        src: /etc/apache2/mods-available/headers.load
+        dest: /etc/apache2/mods-enabled/headers.load
+        state: link
+    - name: Restart apache service
+      ansible.builtin.service:
+        name: apache2
+        state: restarted
